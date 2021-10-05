@@ -1,0 +1,46 @@
+<html>
+<title>Test seo jakiejś strony</title>
+<script src="https://unpkg.com/vue@next"></script>
+
+<body>
+    <div id="app"></div>
+
+    <script>
+        const apiUrl = 'https://templatesapi-vue3.azurewebsites.net/api/templates/';
+        const StaticComp = {
+            template: `<div>Komponent statyczny</div>`
+        };
+
+        const DynamicComp = Vue.defineAsyncComponent(
+            () => new Promise(
+                async resolve => {
+                    const response = await fetch(`${apiUrl}1`);
+                    const template = await response.text();
+
+                    resolve({
+                        template
+                    });
+                }
+            )
+        );
+       
+        const app = Vue.createApp({
+            components: {
+                StaticComp,
+                DynamicComp
+            },
+            template: `
+                <div>
+                    <div>Test ładowania komponentów</div>
+                    <div><StaticComp /></div>
+                    <div>A poniżej komponent dynamiczny załaduje się jak tylko przyjdzie z WebApi</div>
+                    <div><DynamicComp /></div>
+                </div>
+            `
+        });
+
+        app.mount("#app")
+    </script>
+</body>
+
+</html>
